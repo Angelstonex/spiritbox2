@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spirit Box Simulator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 50px;
+            margin: 0;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 0.2em;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-top: 0.2em;
+            color: #bbb;
+        }
+        #spirit-box {
+            border: 2px solid #fff;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #111;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            display: inline-block;
+        }
+        button {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #bbb;
+            transform: scale(1.05);
+        }
+        p {
+            font-size: 1.2em;
+        }
+        #status {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #ddd;
+        }
+        audio {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Spirit Box Simulator</h1>
+    <h2>Creato da Angel Smestad</h2>
+    <p>Clicca sul pulsante per avviare la Spirit Box</p>
+    <div id="spirit-box">
+        <button id="start-button">Start</button>
+        <p id="status">Pronto...</p>
+        <audio id="radio" controls style="display: none;"></audio>
+    </div>
+    <script>
+        const stations = [
+            "http://stream.live.vc.bbcmedia.co.uk/bbc_radio_fourfm",  // BBC Radio 4
+            "http://stream.live.vc.bbcmedia.co.uk/bbc_radio_twofm",  // BBC Radio 2
+            "http://icecast.omroep.nl/radio1-bb-mp3",                // NPO Radio 1
+            "http://icecast.omroep.nl/radio2-bb-mp3"                 // NPO Radio 2
+        ];
+
+        let currentStationIndex = 0;
+        const radio = document.getElementById('radio');
+        const status = document.getElementById('status');
+        const startButton = document.getElementById('start-button');
+
+        startButton.addEventListener('click', startSpiritBox);
+
+        function startSpiritBox() {
+            status.textContent = "Connettendo...";
+            setTimeout(scanStations, 2000);  // Simula il tempo di connessione iniziale
+        }
+
+        function scanStations() {
+            status.textContent = "Sento una presenza...";
+            const scanDuration = getRandomInt(3000, 5000);  // Durata della scansione tra 3 e 5 secondi
+
+            const scan = () => {
+                if (Date.now() < endTime) {
+                    currentStationIndex = (currentStationIndex + 1) % stations.length;
+                    radio.src = stations[currentStationIndex];
+                    radio.play();
+                    setTimeout(scan, getRandomInt(300, 700));  // Cambia stazione ogni 0.3-0.7 secondi
+                } else {
+                    status.textContent = "Pausa...";
+                    radio.pause();
+                    const pauseDuration = getRandomInt(3000, 10000);  // Durata della pausa tra 3 e 10 secondi
+                    setTimeout(scanStations, pauseDuration);
+                }
+            };
+
+            const endTime = Date.now() + scanDuration;
+            scan();
+        }
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    </script>
+</body>
+</html>
